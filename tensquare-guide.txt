@@ -2,3 +2,15 @@
 2.前端 安卓,iOS,H5,jsp
 3,powerdesigner -> 数据库架构设计
 4.UML 统一建模语言
+5.公共镜像如MySQL服务,VM下载->CentOS加载->启动虚拟机->我的电脑管理器service/VMware DHCP->login:root->password:itcast->ip addr->IP->192.168.214.128/24
+6.xshell下载
+7.docker images
+8.systemctl start docker 启动docker
+9.docker search mysql
+10.docker pull mysql/mysql server
+11.网络编辑 ifcfg-ens33
+12.创建镜像 docker run -di --name=tensquare_mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root centos/mysql-57-centos7
+13.查看docker(-a 未启动)docker ps
+14.sqlyog 验证mysql容器OK
+15.sqlyog->询问 + 建表脚本语句->刷新浏览对象->建表结束
+16.idea配置jdk/maven/runner(-DarchetypeCatalog=internal)
