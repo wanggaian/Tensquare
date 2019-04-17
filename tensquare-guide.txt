@@ -14,3 +14,7 @@
 14.sqlyog 验证mysql容器OK
 15.sqlyog->询问 + 建表脚本语句->刷新浏览对象->建表结束
 16.idea配置jdk/maven/runner(-DarchetypeCatalog=internal)
+
+common模块
+17.父工程Result/PageResult/StatuCode对象创建
+18.分布式id生成器 -> twitter 雪花算法

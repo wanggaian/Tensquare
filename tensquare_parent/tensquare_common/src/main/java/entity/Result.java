@@ -2,6 +2,7 @@ package entity;
 
 /**
  * Result
+ * 结果对象
  *
  * @Author wanggaian
  * @Date 2019/4/17 0:06
