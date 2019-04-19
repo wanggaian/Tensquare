@@ -18,3 +18,21 @@
 common模块
 17.父工程Result/PageResult/StatuCode对象创建
 18.分布式id生成器 -> twitter 雪花算法
+
+base模块
+19.resources添加application.yml文件, 可以自动提示,
+server:
+  port: 9001
+spring:
+  application:
+    name: tensquare-base
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.214.128:3306/tensquare_base?characterEncoding=utf-8
+    data-username: root
+    data-password: root
+  jpa:
+    database: mysql
+    show-sql: true
+20.spring-boot-starter-data-jpa/mysql-connector-java pom文件 alt+insert->依赖
+21.controller层 @CrossOrigin微服务  @PathVariable(value = "RequestMapping路径中的")
