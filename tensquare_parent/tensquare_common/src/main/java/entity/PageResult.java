@@ -11,30 +11,30 @@ import java.util.List;
  */
 public class PageResult<T> {
 
-    private long total;
-    private List<T> rows;
+	private long total;
+	private List<T> rows;
 
-    public PageResult() {
-    }
+	public PageResult() {
+	}
 
-    public PageResult(long total, List<T> rows) {
-        this.total = total;
-        this.rows = rows;
-    }
+	public PageResult(long total, List<T> rows) {
+		this.total = total;
+		this.rows = rows;
+	}
 
-    public long getTotal() {
-        return total;
-    }
+	public long getTotal() {
+		return total;
+	}
 
-    public void setTotal(long total) {
-        this.total = total;
-    }
+	public void setTotal(long total) {
+		this.total = total;
+	}
 
-    public List<T> getRows() {
-        return rows;
-    }
+	public List<T> getRows() {
+		return rows;
+	}
 
-    public void setRows(List<T> rows) {
-        this.rows = rows;
-    }
+	public void setRows(List<T> rows) {
+		this.rows = rows;
+	}
 }

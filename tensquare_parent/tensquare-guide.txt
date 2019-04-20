@@ -29,10 +29,43 @@ spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://192.168.214.128:3306/tensquare_base?characterEncoding=utf-8
-    data-username: root
-    data-password: root
+    username: root   (注:不是data-username)
+    password: root
   jpa:
     database: mysql
     show-sql: true
 20.spring-boot-starter-data-jpa/mysql-connector-java pom文件 alt+insert->依赖
 21.controller层 @CrossOrigin微服务  @PathVariable(value = "RequestMapping路径中的")
+22.dao层不需要注释 只用继承JpaRepository<Label, String>, JpaSpecificationExcutor<Label>
+23.postman调用
+24.平时需要关闭虚拟机, 重启虚拟机后, xshell连接, systemctl start docker , 如何开启之前的mysql服务? docker start tensquare_mysql(或者容器id)
+25.java端口占用 netstat -ano|findstr "9050"  -> 然后查看进程 tasklist|findstr "2016"  ->  taskkill /F /PID  17956
+26.@RequestBody 将json字符串转成对象或者map
+27.分页对象用Page<Label> new PageResult<Label>(pageData.getTotalElements(), pageData.getContent()) 返回给前端, 先写service类方法 alt + enter 自动生成service方法, Pageable pageable = PageRequest.of(page - 1, size); 分页参数
+28.return labelDao.findAll(new Specification<Label>() {
+
+            /**
+             *
+             * @param root 将条件封装到哪一个根对象 where 类名 = label.getId()
+             * @param query 查询语句 一般不用 比如 groupBy orderBy
+             * @param cb 条件封装对象 返回null则不需要
+             * @return
+             */
+            @Override
+            public Predicate toPredicate(Root<Label> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                // 先new一个list存放
+                List<Predicate> list = new ArrayList<>();
+                if (!StringUtils.isEmpty(label.getLabelname())) {
+                    Predicate predicate = cb.like(root.get("labelname").as(String.class), "%" + label.getLabelname() + "%"); // where labelname = "%小明%"
+                    list.add(predicate);
+                }
+                if (!StringUtils.isEmpty(label.getState())) {
+                    Predicate predicate = cb.equal(root.get("state").as(String.class), label.getState()); // where state = 1
+                    list.add(predicate);
+                }
+                Predicate[] arr = new Predicate[list.size()];
+                list.toArray(arr); // 将list对象转换成数组存放到arr
+                return cb.and(arr); // where labelname = %小明% and state = 1
+            }
+        }, pageable);
+29.

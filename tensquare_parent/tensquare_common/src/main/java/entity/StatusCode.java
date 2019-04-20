@@ -1,13 +1,13 @@
 package entity;
 
 /**
- * StatuCode
+ * StatusCode
  * 状态码
  *
  * @Author wanggaian
  * @Date 2019/4/17 8:17
  */
-public class StatuCode {
+public class StatusCode {
 
     public static final int OK=20000;//成功
     public static final int ERROR =20001;//失败
