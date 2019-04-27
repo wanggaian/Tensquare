@@ -68,4 +68,8 @@ spring:
                 return cb.and(arr); // where labelname = %小明% and state = 1
             }
         }, pageable);
-29.
+29.代码生成器https://gitee.com/chuanzhiliubei/codeutil   (注:代码生成器db的路径不要包含有中文)
+30.使用原生sql语句,优势可以在sqlyog中执行校验 如 SELECT * FROM tb_problem,tb_pl WHERE id = problemid AND labelid = "1"
+	SELECT * FROM tb_problem,tb_pl WHERE id IN (SELECT problemid FROM tb_pl WHERE labelid = "1")   (尽量不用in,效率低)
+31.
+
