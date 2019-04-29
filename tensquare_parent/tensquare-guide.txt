@@ -71,5 +71,7 @@ spring:
 29.代码生成器https://gitee.com/chuanzhiliubei/codeutil   (注:代码生成器db的路径不要包含有中文)
 30.使用原生sql语句,优势可以在sqlyog中执行校验 如 SELECT * FROM tb_problem,tb_pl WHERE id = problemid AND labelid = "1"
 	SELECT * FROM tb_problem,tb_pl WHERE id IN (SELECT problemid FROM tb_pl WHERE labelid = "1")   (尽量不用in,效率低)
-31.
+31.增删改要加@Modifying 注解, UPDATE tb_article SET thumbup = thumbup + 1 WHERE id = ?
+32.Redis容器构建 docker run -di --name=tensquare_redis -p 6379:6379 redis
+33.redisTemplate.opsForValue().set("article_" + id, article, 10, TimeUnit.SECONDS);  k/v/过期时间/单位
 
