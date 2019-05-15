@@ -163,4 +163,9 @@ WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
 }
 44. postman建文档查询 GET http://127.0.0.1:9200/tensquare_elasticsearch/article/_search
 45. postman使用修改加id 若没有此id则新增 PUT http://127.0.0.1:9200/tensquare_elasticsearch/article/1
-46. postman使用模糊查询 GET GET http://127.0.0.1:9200/tensquare_elasticsearch/article/_search?q=title:*s*
+46. postman使用模糊查询 GET GET http://127.0.0.1:9200/tensquare_elasticsearch/article/_search?q=title:*s* 
+47. head插件 需要nodejs,npm 安装npm -> npm install ‐g cnpm ‐‐registry=https://registry.npm.taobao.org -> npm install ‐g grunt‐cli -> cnpm install 
+48. ik分词器 默认分词 http://localhost:9200/_analyze?analyzer=chinese&pretty=true&text=我是程序员    
+	最少切分 http://localhost:9200/_analyze?analyzer=ik_smart&pretty=true&text=我是程序员
+	最少切分 http://localhost:9200/_analyze?analyzer=ik_max_word&pretty=true&text=我是程序员
+	个性化词汇 ik/config/新建个 custom.dic  格式utf-8
