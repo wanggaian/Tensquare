@@ -15,7 +15,8 @@
 		<module>tensquare_article</module>
 		<module>tensquare_gathering</module>
         <module>tensquare_spit</module>
-    </modules>
+		<module>tensquare_search</module>
+	</modules>
 	<packaging>pom</packaging>
 
 	<name>tensquare_parent</name>

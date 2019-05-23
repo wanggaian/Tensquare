@@ -168,4 +168,68 @@ WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
 48. ik分词器 默认分词 http://localhost:9200/_analyze?analyzer=chinese&pretty=true&text=我是程序员    
 	最少切分 http://localhost:9200/_analyze?analyzer=ik_smart&pretty=true&text=我是程序员
 	最少切分 http://localhost:9200/_analyze?analyzer=ik_max_word&pretty=true&text=我是程序员
-	个性化词汇 ik/config/新建个 custom.dic  格式utf-8
+	个性化词汇 ik/config/新建个 custom.dic  格式utf-8  IKAlyzaer <entry key="ext_dict">custom.dic</entry>
+49. elasticsearch pojo类注解
+	
+@Document(indexName = "tensquare_article", type = "article")
+public class Article implements Serializable {
+
+    @Id
+    private String id;
+
+    /**
+     * 是否索引,索引则可以通过此查询
+     * 是否分词,分词则可以通过切分之后的词查询到,否则只能完整匹配
+     * 是否存储,存储则展示 比如标题/描述(没有描述字段,只有内容字段,当做描述)
+     */
+    @Field(index = true, analyzer = "ik_max_anaylyzer", searchAnalyzer = "ik_max_anaylyzer")
+    private String title; // 标题
+
+    @Field(index = true, analyzer = "ik_max_anaylyzer", searchAnalyzer = "ik_max_anaylyzer")
+    private String content; // 文章正文
+
+    private String state; // 审核状态
+}
+
+50. logstash 同步mysql中的记录id/title/content 到 索引库ES中   logstash ‐f ../mysqletc/mysql.conf    (mysql.conf 模板改写)
+51. docker 部署es及插件
+	docker pull elasticsearch:5.6.8
+	docker run -di --name=tensquare_elasticsearch -p 9200:9200 -p 9300:9300 elasticsearch:5.6.8
+	docker exec -it tensquare_elasticsearch /bin/bash
+	cd config 
+	elasticsearch.yml
+	exit
+	cd ~
+	docker cp tensquare_elasticsearch:/usr/share/elasticsearch/config/elasticsearch.yml /usr/share/elasticsearch.yml
+	docker stop tensquare_elasticsearch
+	docker rm tensquare_elasticsearch
+	docker run -di --name=tensquare_elasticsearch -p 9200:9200 -p 9300:9300 -v /usr/share/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml elasticsearch:5.6.8
+	vi /usr/share/elasticsearch.yml  去掉 transport.host: 0.0.0.0 前的#
+
+	加上跨域条件参数
+	http.cors.enabled: true
+	http.cors.allow‐origin: "*"
+
+	加ik分词器
+	快捷键alt+p进入sftp
+	sftp> put -r d:\setup\ik
+	docker cp ik tensquare_elasticsearch:/usr/share/elasticsearch/plugins/
+	docker restart tensquare_elasticsearch
+
+	head插件
+	docker run -di --name=myhead ‐p 9100:9100 docker pull mobz/elasticsearch-head:5
+
+
+52. 系统调优
+	vi /etc/security/limits.conf
+	添加两行参数:
+	* soft nofile 65536
+	* hard nofile 65536
+	vi /etc/sysctl.conf
+	添加一行参数
+	vm.max_map_count=655360
+	下面命令立即生效
+	sysctl -p
+	重启虚拟机
+	reboot
+	
