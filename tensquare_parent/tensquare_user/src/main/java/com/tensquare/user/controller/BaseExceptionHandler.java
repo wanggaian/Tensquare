@@ -1,4 +1,4 @@
-package com.tensquare.qa.controller;
+package com.tensquare.user.controller;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.web.bind.annotation.ControllerAdvice;

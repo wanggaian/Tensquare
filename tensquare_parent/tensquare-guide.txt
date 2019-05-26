@@ -233,3 +233,106 @@ public class Article implements Serializable {
 	重启虚拟机
 	reboot
 	
+53. 消息中间件 activeMQ,RabbitMQ, Kafka(大数据)  性能依次提升, 安全依次下降
+54. RabbitMQ windows 安装  Eralng 安装  -> RabbitMQ安装  -> 插件安装 bin目录下 rabbitmq-plugins enable rabbitmq_management
+55. 程序中注入 spring-boot-starter-amqp  
+56. 直接模式 生产者 rabbitTemplate.convertAndSend("itcast", "发送消息");    
+消费者 
+@Component
+@RabbitListener(queues = "itcast")
+public class Customer1 {
+
+    @RabbitHandler
+    public void getMsg(String msg) {
+        System.out.println("111消费消息" + msg);
+    }
+}
+57. 同一程序启动多个实例  更改端口号 然后编辑启动类的single instance √去掉
+58. /**
+     * 分裂模式
+     */
+    @Test
+    public void sendFanout() {
+        rabbitTemplate.convertAndSend("chuanzhi","", "分裂模式");
+    }
+
+    /**
+     * 主题模式
+     */
+    @Test
+    public void sendTopic() {
+        rabbitTemplate.convertAndSend("topic1","good.log", "主题模式");
+        System.out.println(" ");
+    }
+	good.#  (后边可以跟多项 如 good.abc.efg  good.* 只有一项)
+59. 短信验证
+
+		// 验证码
+		String checkcode = RandomStringUtils.randomNumeric(6);
+
+		// 存入缓存
+		redisTemplate.opsForValue().set("sms_" + mobile, checkcode, 6, TimeUnit.HOURS);
+
+		// 给用户
+		rabbitTemplate.convertAndSend("sms", checkcode);
+
+60. 鉴权框架 
+
+	  <dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-security</artifactId>
+	  </dependency>
+会拦截所有请求 所以需要加配置类 取消拦截
+启动类注入bean
+
+	
+	@Bean
+	public BCryptPasswordEncoder encoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+		admin.setPassword(encoder.encode(admin.getPassword()));
+
+61. 发送验证码(随机数+Redis缓存验证码+RabbitMQ产生队列消息+SMS项目消费消息+阿里云发送短信) && 用户注册(验证码+手机号去缓存拿验证码对比+Nickname+密码BCry加密) && 用户登录(密码+Nickname拿密文密码+验证登录+前后端通话)
+
+62. jwt(json web token)
+
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt</artifactId>
+      <version>0.6.0</version>
+    </dependency>
+组成=头部(jwt+hs256) && 载荷(id+sub登录+exp过期时间) && 签名(头部+载荷+盐)
+
+63. 创建 及 解析 JWT
+public class CreateJwt {
+
+    public static void main(String[] args) {
+        JwtBuilder jwtBuilder = Jwts.builder()
+                .setId("888")
+                .setSubject("不知名网友")
+                .setIssuedAt(new Date())
+                .signWith(SignatureAlgorithm.HS256, "itcast")
+                .setExpiration(new Date(new Date().getTime() + 60000))
+                .claim("role", "admin");
+        String str = jwtBuilder.compact();
+        System.out.println("jwt token:" + str);
+    }
+}
+
+public class ParseJwt {
+
+    public static void main(String[] args) {
+        String token = "eysss.eslss.eee";
+        Claims claims = Jwts.parser().setSigningKey("itcast").parseClaimsJws(token).getBody();
+        System.out.println("用户id:" + claims.getId());
+        System.out.println("用户名:" + claims.getSubject());
+        System.out.println("登录时间:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(claims.getIssuedAt()));
+        System.out.println("过期时间:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(claims.getExpiration()));
+        System.out.println("用户角色:" + claims.get("role"));
+    }
+}
+
+加上异常捕获 过期exception
+
+64. 

@@ -7,8 +7,11 @@ import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import util.JwtUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 /**
  * problem控制器层
@@ -22,6 +25,9 @@ public class ProblemController {
 
 	@Autowired
 	private ProblemService problemService;
+
+	@Autowired
+	private HttpServletRequest request;
 
 	/**
 	 * 查询最新回复
@@ -99,6 +105,10 @@ public class ProblemController {
 	 */
 	@RequestMapping(method=RequestMethod.POST)
 	public Result add(@RequestBody Problem problem  ){
+		String token = (String) request.getAttribute("claims_user");
+		if (StringUtils.isEmpty(token)) {
+			return new Result(false, StatusCode.ACCESSERROR, "请先登录");
+		}
 		problemService.add(problem);
 		return new Result(true,StatusCode.OK,"增加成功");
 	}

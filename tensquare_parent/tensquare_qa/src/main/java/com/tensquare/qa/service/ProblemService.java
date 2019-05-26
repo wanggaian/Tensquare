@@ -111,7 +111,7 @@ public class ProblemService {
 	 * @param problem
 	 */
 	public void add(Problem problem) {
-		// problem.setId( idWorker.nextId()+"" ); 雪花分布式ID生成器
+		problem.setId( idWorker.nextId()+"" ); // 雪花分布式ID生成器
 		problemDao.save(problem);
 	}
 
