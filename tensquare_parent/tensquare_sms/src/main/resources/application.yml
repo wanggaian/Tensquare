@@ -11,3 +11,9 @@ aliyun:
     accessKeySecret: bxQhjnIDkqXzjIAGkDNyFbHhR32QPP
     sign_name: tensquare
     template_code: SMS_166372248
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:6868/eureka/
+  instance:
+    prefer-ip-address: true

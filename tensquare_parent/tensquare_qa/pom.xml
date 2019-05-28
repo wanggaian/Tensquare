@@ -20,5 +20,15 @@
 			<artifactId>tensquare_common</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+	  <dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		  <version>2.0.0.M8</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-openfeign</artifactId>
+		  <version>2.0.0.M2</version>
+	  </dependency>
   </dependencies>  
 </project>

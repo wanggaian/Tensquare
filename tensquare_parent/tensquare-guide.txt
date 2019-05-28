@@ -335,4 +335,50 @@ public class ParseJwt {
 
 加上异常捕获 过期exception
 
-64. 
+64. interceptor && config  拦截器
+
+65. SpringCloud :  Eureka(通信 dubbo + zookeeper) + Feign(相互调用)
+
+66. 父工程
+<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Finchley.M9</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+创建 服务器
+<dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+            <version>2.0.0.M8</version>
+        </dependency>
+配置文件
+server:
+  port: 6868
+eureka:
+  client:
+    register-with-eureka: false #是否将自己注册到Eureka服务中，本身就是所有无需注册
+    fetch-registry: false #是否从eureka获取注册信息
+    service-url: #暴露的服务地址
+      defaultZone: http://127.0.0.1:${server.port}/eureka/
+
+67. 
+    客户端
+	  <dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		  <version>2.0.0.M8</version>
+	  </dependency>
+feign 调用
+	  <dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-openfeign</artifactId>
+		  <version>2.0.0.M2</version>
+	  </dependency>

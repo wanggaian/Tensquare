@@ -1,5 +1,6 @@
 package com.tensquare.qa.controller;
 
+import com.tensquare.qa.client.BaseClient;
 import com.tensquare.qa.pojo.Problem;
 import com.tensquare.qa.service.ProblemService;
 import entity.PageResult;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import util.JwtUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -28,6 +28,14 @@ public class ProblemController {
 
 	@Autowired
 	private HttpServletRequest request;
+
+	@Autowired
+	private BaseClient baseClient;
+
+	@RequestMapping(value = "/label/{labelId}", method = RequestMethod.GET)
+	public Result findByLabelId(@PathVariable String labelId) {
+		return baseClient.findById(labelId);
+	}
 
 	/**
 	 * 查询最新回复
