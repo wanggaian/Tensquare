@@ -41,6 +41,16 @@ public class UserController {
 	@Autowired
 	private JwtUtil jwtUtil;
 
+	/**
+	 * 更新用户关注数和好友粉丝数
+	 */
+	@RequestMapping(value = "/{userid}/{friendid}/{x}", method = RequestMethod.PUT)
+	public void updatefollowcountandfanscount(@PathVariable String userid, @PathVariable String friendid, @PathVariable int x) {
+		userService.updatefollowcountandfanscount(userid, friendid, x);
+	}
+
+
+
 	@RequestMapping(value = "/sendSms/{mobile}", method = RequestMethod.POST)
 	public Result sendSms(@PathVariable String mobile) {
 		userService.sendSms(mobile);

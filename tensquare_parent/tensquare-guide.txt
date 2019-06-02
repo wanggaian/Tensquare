@@ -382,3 +382,148 @@ feign 调用
 		  <artifactId>spring-cloud-starter-openfeign</artifactId>
 		  <version>2.0.0.M2</version>
 	  </dependency>
+
+68. 雪崩效应 -> 使用Hystrix实现 熔断器 
+	C D -> B -> A   : A不可用 导致B不可用 ,随着时间推移 ABCD 都不可用
+	
+@Component
+public class BaseClientImpl implements BaseClient {
+    @Override
+    public Result findById(String labelId) {
+        return new Result(false, StatusCode.ERROR, "熔断器触发!");
+    }
+}
+
+注释:@FeignClient(value = "tensquare-base", fallback = BaseClientImpl.class)
+
+配置:feign:
+hystrix:
+enabled: true
+
+69. 网关  外部访问内部服务 不区分是哪个服务的端口 由中间的网关统一转发 Zuul
+	启动类
+@SpringBootApplication
+@EnableEurekaClient
+@EnableZuulProxy
+public class ManagerApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ManagerApplication.class);
+    }
+}
+
+
+配置:
+
+zuul:
+  routes:
+    tensquare‐gathering: #活动
+      path: /gathering/** #配置请求URL的请求规则
+      serviceId: tensquare‐gathering #指定Eureka注册中心中的服务id
+    tensquare‐article: #文章
+      path: /article/** #配置请求URL的请求规则
+      serviceId: tensquare‐article #指定Eureka注册中心中的服务id
+    tensquare‐base: #基础
+      path: /base/** #配置请求URL的请求规则
+      serviceId: tensquare‐base #指定Eureka注册中心中的服务id
+    tensquare‐friend: #交友
+      path: /friend/** #配置请求URL的请求规则
+      serviceId: tensquare‐friend #指定Eureka注册中心中的服务id
+    tensquare‐qa: #问答
+      path: /qa/** #配置请求URL的请求规则
+      serviceId: tensquare‐qa #指定Eureka注册中心中的服务id
+    tensquare‐recruit: #招聘
+      path: /recruit/** #配置请求URL的请求规则
+      serviceId: tensquare‐recruit #指定Eureka注册中心中的服务id
+    tensquare‐spit: #吐槽
+      path: /spit/** #配置请求URL的请求规则
+      serviceId: tensquare‐spit #指定Eureka注册中心中的服务id
+    tensquare‐user: #用户
+      path: /user/** #配置请求URL的请求规则
+      serviceId: tensquare‐user
+
+web网关跟 后台网关一样
+
+70.contenttype -> Tomcat -> web.xml 查找
+
+71. 网关过滤器 权限验证 不同行则
+
+72. 配置中心服务 将服务放到码云上
+config:
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-server</artifactId>
+            <version>2.0.0.M9</version>
+        </dependency>
+server:
+  port: 12000
+spring:
+  application:
+    name: tensquare-config
+  cloud:
+    config:
+      server:
+        git:
+          uri: git@gitee.com:wanggaian/tensquare-config.git
+@SpringBootApplication
+@EnableConfigServer
+public class ConfigApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ConfigApplication.class);
+    }
+}
+
+
+base:
+<dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+            <version>2.0.0.M9</version>
+        </dependency>
+
+bootstrap配置为
+spring:
+  cloud:
+    config:
+      name: base
+      profile: dev
+      label: master
+      uri: http://127.0.0.1:12000
+
+
+73. springcloudbus 更改配置文件 不需要重启服务(有一个mq监听码云上的修改 客服发送一个refresh请求消费即可重新编译配置文件)
+config:
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-bus</artifactId>
+            <version>2.0.0.M7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+            <version>2.0.0.RC3</version>
+        </dependency>
+server:
+  port: 12000
+spring:
+  application:
+    name: tensquare-config
+  cloud:
+    config:
+      server:
+        git:
+          uri: (错误:应该拿HTTPS的访问地址!!!)git@gitee.com:wanggaian/tensquare-config.git
+  rabbitmq:
+    host: 192.168.214.128
+management: #暴露触发消息总线的地址
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh
+自定义配置生效 要加上@RefreshScope标签
+bus 消费监听消息 http://127.0.0.1:12000/actuator/bus-refresh
+
+74.
