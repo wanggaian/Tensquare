@@ -85,7 +85,7 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-		<!--build mvn error-->
+		<!--build mvn  error-->
 		<repository>
 			<id>repository.springframework.maven.release</id>
 			<name>Spring Framework Maven Release Repository</name>
