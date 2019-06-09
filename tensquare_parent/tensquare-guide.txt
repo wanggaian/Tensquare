@@ -608,4 +608,50 @@ docker run -di --name=gogs -p 10022:22 -p 3000:3000 -v /var/gogsdata:/data gogs/
 idea里 vsc enable version controller git
 项目 右键 git remote 把 xhttpuri 地址填入
 项目 右键 git commit (到本地)
-项目 右键 git push 到仓库
+项目 右键 git push 到仓库 origin-master 可以切换push到的地址
+
+77. Jenkins 宿主机上安装
+安装jdk       rpm -ivh jdk‐8u171‐linux‐x64.rpm     (默认目录为/usr/java/jdk1.8.0_171t)
+下载Jenkins包 wget https://pkg.jenkins.io/redhat/jenkins-2.83-1.1.noarch.rpm
+Jenkins安装 rpm -ivh jenkins‐2.83‐1.1.noarch.rpm
+修改配置 vi /etc/sysconfig/jenkins
+更改用户 root 端口 8888
+JENKINS_USER="root"
+JENKINS_PORT="8888"
+启动Jenkins   systemctl start jenkins
+访问 http://192.168.214.128:8888
+从/var/lib/jenkins/secrets/initialAdminPassword 获取初始密码串
+
+安装git maven integration插件
+配置全局环境变量 jdk(/usr/java/jdk1.8.0_171-amd64)  git default   maven(/usr/local/maven)
+新建一个Jenkins 任务 maven类型 -> Source Code Management (git)  -> 
+
+78. rancher  容器微服务部署软件 图形化管理服务环境 节省命令
+安装  docker run -di --name=rancher --restart=always -p 9090:8080 rancher/server
+http://192.168.214.128:9090/ 图形界面 添加环境 tensquare-dev  -> 添加应用 tensquare-dev   ->  添加服务 如 tensquare-mysql   容器中镜像名称(有版本号则:xxx)  初始化变量 MYSQL_ROOT_PASSWORD=root   ->  端口号映射
+注:创建前总是拉取镜像的√去掉 避免去网络资源拉取 本地服务的代码镜像
+
+rancher优势扩容缩容 必须创建的时候没有端口号   所以必须有网关  通过名称去访问
+添加接收器 -> webhooks  -> 配置扩缩容服务 步长(每次添加几个)  复制地址 postman调用(以后通过influtDB 自动检测扩缩容)
+
+79.  influxDB  
+docker run -di -p 8083:8083 -p 8086:8086 --expose 8090 --expose 8099 --name influxsrv tutum/influxdb
+query template 里模板语句 创建展示数据库和admin用户
+CREATE DATABASE "tensquare-db"  回车
+SHOW DATABASES
+CREATE USER "tensquare" WITH PASSWORD 'tensquare' WITH ALL PRIVILEGES
+SHOW USERS
+SHOW MEASUREMENTS 查看cadvisor收集的数据 主要是 内存memory_usage  需要借助grafana
+
+80.  cAdvisor 把容器内存性能等数据同步到influxDB中
+docker run --volume=/:/rootfs:ro --volume=/var/run:/var/run:rw --volume=/sys:/sys:ro --volume=/var/lib/docker/:/var/lib/docker:ro --publish=9096:8080 --detach=true \
+--link influxsrv:influxsrv --name=cadvisor google/cadvisor -storage_driver=influxdb -storage_driver_db=tensquare-db -storage_driver_host=influxsrv:8086
+
+81. grafana
+docker run -d -p 3001:3000 -e INFLUXDB_HOST=influxsrv -e INFLUXDB_PORT=8086 -e INFLUXDB_NAME=tensquare -e INFLUXDB_USER=tensquare -e INFLUXDB_PASS=cadvisor --link influxsrv:influxsrv \
+--name=grafana grafana/grafana
+admin/admin -> itcast/itcast
+
+configuration -> data source -> type(influxdb) -> http -> influxDB detail  tensquare-db  tensquare/tensquare
+manage -> add dashboard -> 走势图 -> 标题处edit ->  Metrics 监控sql ->  Alert 设置预警线 -> 报警 发送扩容请求(rancher 地址复制 )
+alerting -> notification channels -> add channel -> webhooks
